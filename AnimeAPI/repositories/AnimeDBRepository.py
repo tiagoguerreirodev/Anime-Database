@@ -66,6 +66,8 @@ class AnimeDBRepository():
         }
         '''
 
+    # Buscar os animes na API, por gênero ou por nome.
+    #formato do dicionário
     def get_anime(self, request: dict[str, str | int]) -> Response:
         json = build_query(self.baseQuery, **request)
         response: Response = post(
