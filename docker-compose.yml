@@ -1,21 +1,33 @@
 version: '3.7'
 services:
-  # api:
-  #   image: python:3.10-slim-bullseye
-  #   command: sh -c "python3 -m pip install fastapi pydantic requests email-validator && python3 main.py"
-  #   working_dir: /api
-  #   container_name: backend
-  #   volumes:
-  #     - ./AnimeAPI:/api
-  #   ports:
-  #     - 5000:5000
-  front:
-    image: node:18-alpine
-    working_dir: /front
-    command: sh -c "npm install && npm start"
-    container_name: frontend
+  api:
+    image: python:3.10-slim-bullseye
+    command: sh -c "python3 -m pip install motor uvicorn fastapi pydantic requests email-validator && python3 main.py"
+    working_dir: /api
+    container_name: backend
     volumes:
-      - ./AnimeFront:/front
-      - /front/node_modules
+      - ./AnimeAPI:/api
     ports:
-      - 80:80
+      - 5000:5000
+    depends_on:
+      - db
+  # front:
+  #   image: node:18-alpine
+  #   working_dir: /front
+  #   command: sh -c "npm install && npm start"
+  #   container_name: frontend
+  #   volumes:
+  #     - ./AnimeFront:/front
+  #     - /front/node_modules
+  #   ports:
+  #     - 80:80
+  db:
+    image: mongo:4.2.23
+    ports:
+      - 30000:27017
+    volumes:
+      - ./mongodatadb:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: AnimeDB
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null

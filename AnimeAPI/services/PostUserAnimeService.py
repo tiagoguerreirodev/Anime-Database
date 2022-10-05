@@ -5,7 +5,7 @@ from fastapi import HTTPException
 class PostUserAnimeService():
     async def execute(self, anime: dict):
         anime_db_repository = AnimeDBRepository()
-        anime_already_exists = anime_db_repository.get_anime_by_title(
+        anime_already_exists = await anime_db_repository.get_anime_by_title(
             anime['title'])
         if anime_already_exists:
             raise HTTPException(409, f"O anime {anime['title']} já existe.")
