@@ -11,6 +11,8 @@ services:
       - 5000:5000
     depends_on:
       - db
+    environment:
+      - RUNNING_IN_DOCKER=1
   # front:
   #   image: node:18-alpine
   #   working_dir: /front
