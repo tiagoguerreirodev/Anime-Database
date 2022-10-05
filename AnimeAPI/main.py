@@ -28,7 +28,8 @@ tags_metadata = [
 ]
 
 allowed_origins = [
-    "http://localhost"
+    "http://localhost",
+    "http://localhost:5000"
 ]
 
 app = FastAPI(
@@ -48,13 +49,13 @@ app = FastAPI(
 
 app.include_router(router)
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=allowed_origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True, host="0.0.0.0", port=5000)
