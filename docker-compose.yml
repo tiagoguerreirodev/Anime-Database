@@ -1,20 +1,21 @@
 version: '3.7'
 services:
-  api:
-    image: python:3.10-slim-bullseye
-    command: sh -c "python3 -m pip install fastapi pydantic requests email-validator && uvicorn main:app --host 0.0.0.0 --port 5000"
-    working_dir: /AnimeAPI
-    volumes:
-      - ./AnimeAPI:/AnimeAPI
-    ports:
-      - 5000:5000
+  # api:
+  #   image: python:3.10-slim-bullseye
+  #   command: sh -c "python3 -m pip install fastapi pydantic requests email-validator && python3 main.py"
+  #   working_dir: /api
+  #   container_name: backend
+  #   volumes:
+  #     - ./AnimeAPI:/api
+  #   ports:
+  #     - 5000:5000
   front:
-    image: nginx:1.23
-    hostname: anime
-    domainname: anime.local
-    working_dir: /AnimeFront
+    image: node:18-alpine
+    working_dir: /front
+    command: sh -c "npm install && npm start"
+    container_name: frontend
     volumes:
-      - ./AnimeFront:/AnimeFront
-      - ./AnimeFront/nginx.conf:/etc/nginx/nginx.conf
+      - ./AnimeFront:/front
+      - /front/node_modules
     ports:
       - 80:80

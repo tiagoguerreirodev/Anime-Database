@@ -1,15 +1,14 @@
 from requests import request
 from errors.GenreDoesNotExistError import GenreDoesNotExistError
-from errors.NoSearchArgumentsError import NoSearchArgumentsError
-from repositories.AnimeDBRepository import AnimeDBRepository
+from repositories.AnilistRepository import Anilistepository
 from requests import Response
 
 
 class GetAnimeService():
-    def execute(self, request: dict[str, str | int]) -> Response:
-        anime_db_repository = AnimeDBRepository()
-        if request['genre'] not in anime_db_repository.possible_genres:
+    async def execute(self, request: dict[str, str | int]) -> Response:
+        anilist_repository = Anilistepository()
+        if request['genre'] not in anilist_repository.possible_genres:
             raise GenreDoesNotExistError(
                 "Esse gênero não existe ou está escrito errado.")
-        response: Response = anime_db_repository.get_anime(request)
+        response: Response = anilist_repository.get_anime(request)
         return response

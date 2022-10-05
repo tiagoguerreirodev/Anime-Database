@@ -1,75 +1,26 @@
-from requests import post, Response
-from typing import FrozenSet
-from utils import build_query
-
-Genres = FrozenSet[str]
+from database.database import anime_collection
+from models.Anime import Anime
 
 
 class AnimeDBRepository():
-    '''
-    Classe responsável pela comunicação com a API GraphQL do Anilist.
+    async def get_anime_by_title(self, title: str):
+        document = await anime_collection.find_one({
+            "title": title
+        })
+        return document
 
-    ...
+    async def get_all_animes(self):
+        animes = []
+        cursor = anime_collection.find({})
+        async for document in cursor:
+            animes.append(Anime(**document))
+        return animes
 
-    Atributos
-    ---------
-    url : str
-        A url do serviço, no caso a do Anilist.
+    async def post_anime(self, anime: dict):
+        document = anime
+        result = await anime_collection.insert_one(document)
+        return document
 
-    Métodos
-    -------
-    get_anime(genre: str = None, animeName: str = None, perPage: int = 3, page: int = 1):
-        Retorna os animes buscados.
-    '''
-
-    def __init__(self):
-        self.url: str = 'https://graphql.anilist.co'
-        self.possible_genres: Genres = frozenset([
-            "Action",
-            "Adventure",
-            "Comedy",
-            "Drama",
-            "Ecchi",
-            "Fantasy",
-            "Hentai",
-            "Horror",
-            "Mahou Shoujo",
-            "Mecha",
-            "Music",
-            "Mystery",
-            "Psychological",
-            "Romance",
-            "Sci-Fi",
-            "Slice of Life",
-            "Sports",
-            "Supernatural",
-            "Thriller"
-        ])
-        self.baseQuery: str = '''
-        query ($page: Int, $perPage: Int, $search: String, $genre: String) {
-            Page(page: $page, perPage: $perPage) {
-                pageInfo {
-                    perPage
-                    currentPage
-                    lastPage
-                    hasNextPage
-                }
-                media (search: $search, genre: $genre) {
-                    id
-                    genres
-                    title {
-                        romaji
-                        native
-                    }
-                }
-            }
-        }
-        '''
-
-    # Buscar os animes na API, por gênero ou por nome.
-    #formato do dicionário
-    def get_anime(self, request: dict[str, str | int]) -> Response:
-        json = build_query(self.baseQuery, **request)
-        response: Response = post(
-            url=self.url, json=json, verify=False)
-        return response
+    async def delete_anime(self, id: int):
+        result = await anime_collection.delete_one({"id": id})
+        return result
